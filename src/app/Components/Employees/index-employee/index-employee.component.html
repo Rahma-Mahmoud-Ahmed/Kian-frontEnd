@@ -1,0 +1,237 @@
+<div class="m-3 d-flex justify-content-between">
+  <button type="button" class="btn btn-primary" routerLink="/add-employee" ><i class="fa fa-plus mx-2"></i>ADD Employee</button>
+<button type="button" class="btn btn-secondary" routerLink="/employees" >Reload</button>
+
+</div>
+<p class="m-3">You can Add  <code>Employees</code> on this page and make CRUD operations</p>
+
+<table class="table table-striped ">
+  <thead>
+  <tr>
+    <th scope="col">ID</th>
+    <th scope="col">First name</th>
+    <th scope="col">Last name</th>
+    <th scope="col">User name</th>
+    <th scope="col">Activate</th>
+    <th scope="col">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let emp of AllEmployees  | paginate: { itemsPerPage: 4, currentPage: pages }
+  ; let i = index">
+    <th scope="row">{{ emp.id }}</th>
+    <td>
+      {{ emp.firstName}}
+    </td>
+    <td>{{ emp.lastName}}</td>
+    <td>{{ emp.userName }}</td>
+     <td>
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox"  *ngIf="emp.isActive ==0"  (click)="toggle(emp.id , emp.isActive )" >
+        <input class="form-check-input" type="checkbox"  *ngIf="emp.isActive ==1" checked (click)="toggle(emp.id , emp.isActive )" >
+      </div>
+    </td>
+
+    <td>
+      <div class="btn-group " role="group" aria-label="Basic mixed styles example">
+        <button type="button " class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="updateEmployee(emp,emp.id)">Update</button>
+        <button type="button" class="btn btn-danger ms-3 "  data-bs-toggle="modal" data-bs-target="#exampleModal2" (click)="deleteEmployee(emp)">Delete</button>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-success" id="exampleModalLabel">Update Employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body ">
+        <form  #f="ngForm">
+          <div class="form-group col-md-12 text-left">
+            <label class="text-left" for="firstName">firstName</label>
+
+
+             <input placeholder="Enter Employee First Name..." type="text" id="firstName" name="firstName" class="form-control"
+  required minlength="2" appForbiddenName="bob"
+  [(ngModel)]="editEmp.firstName" #firstName="ngModel">
+
+      <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)"
+          class="alert text-danger">
+
+        <div *ngIf="firstName.errors?.['required']">
+          first Name is required.
+        </div>
+        <div *ngIf="firstName.errors?.['minlength']">
+          first Name must be at least 2 characters long.
+        </div>
+
+
+      </div>
+
+          </div>
+          <div class="form-group col-md-12 text-left">
+            <label class="text-left"  for="lastName">lastName</label>
+
+
+             <input type="text" placeholder="Enter Employee Last Name..." id="lastName" name="lastName" class="form-control"
+  required minlength="2" appForbiddenName="bob"
+  [(ngModel)]="editEmp.lastName" #lastName="ngModel">
+
+      <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
+          class="alert text-danger">
+
+        <div *ngIf="lastName.errors?.['required']">
+          last Name is required.
+        </div>
+        <div *ngIf="lastName.errors?.['minlength']">
+          last Name must be at least 2 characters long.
+        </div>
+
+
+      </div>
+
+          </div>
+          <div class="form-group col-md-12 text-left">
+            <label class=""  for="username">UserName</label>
+
+            <!-- <input type="text" name="userName" class="form-control" id="username" aria-describedby="username" required minlength="4"
+             [ngModelOptions]="{standalone:true}" [(ngModel)]="editEmp.userName"> -->
+
+             <input type="text" placeholder="Enter Employee User Name..." id="username" name="userName" class="form-control"
+  required minlength="2" appForbiddenName="bob"
+  [(ngModel)]="editEmp.userName" #userName="ngModel">
+
+      <div *ngIf="userName.invalid && (userName.dirty || userName.touched)"
+          class="alert text-danger">
+
+        <div *ngIf="userName.errors?.['required']">
+          user Name is required.
+        </div>
+        <div *ngIf="userName.errors?.['minlength']">
+          user Name must be at least 2 characters long.
+        </div>
+
+
+      </div>
+
+          </div>
+          <div class=" form-group col-md-12 ml-3 text-left">
+            <input class="form-check-input" type="checkbox"  id="empisActive" [(ngModel)]="editEmp.isActive" name="empisActive">
+            <label class="form-check-label " for="empisActive">
+              IsActive
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer justify-content-start">
+        <button  type="submit"  class="btn btn-success"   (click)="confirmUpdate(editEmp)">Update Employee</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-danger" id="exampleModalLabel2">Delete Employee</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body  ">
+        Do You Want To Delete This Employee??
+      </div>
+      <div class="modal-footer justify-content-start">
+        <button  type="submit"  class="btn btn-danger" data-bs-dismiss="modal" (click)="confirmDelete(editEmp.id)">Delete</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- update Employee modal starts -->
+<!-- <ng-template #updateModalRef let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title text-primary" id="modal-basic-title">
+      Update Employee
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="d()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-md-12">
+        <form [formGroup]="updateForm" (ngSubmit)="confirmUpdate()">
+          <div>
+            <h4>Update Employee</h4>
+          </div>
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label for="firstName">
+               FirstName</label>
+              <input type="text" id="firstName" class="form-control round"  formControlName="firstName" />
+            </div>
+            <div class="form-group col-md-12">
+              <label for="lastName">LastName</label>
+              <input type="text" id="lastName" class="form-control round"  formControlName="lastName" />
+            </div>
+            <div class="form-group col-md-12">
+              <label for="userName">UserName</label>
+              <input type="text" id="userName" class="form-control round"  formControlName="userName" />
+            </div>
+            <div class="form-check">
+              <input type="checkbox" id="isActive" class="form-control round"  formControlName="isActive" />
+              <label class="form-check-label" for="emp.isActive">
+                IsActive
+              </label>
+            </div>
+
+            <div class="form-group col-md-12">
+              <ui-switch
+                class="no-outline"
+                [checkedLabel]="Active"
+                checkedTextColor="#FFFF"
+                [uncheckedLabel]="UnActive"
+                uncheckedTextColor="#FFFF"
+                defaultBgColor="#dc3545"
+                defaultBoColor="none"
+                formControlName="isActive"
+              ></ui-switch>
+            </div> -->
+            <!-- A hidden submit button to allow user submit form with Enter -->
+            <!-- <button type="submit" hidden></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="modal-actions">
+      <button
+        type="button"
+        class="btn btn-raised btn-primary round"
+        (click)="confirmUpdate()"
+        ngbAutofocus
+      >
+        <i class="fa fa-check"></i>
+        <span class="mx-1">Update Employee</span>
+      </button>
+      <button type="button" class="btn btn-outline-dark round" (click)="c()">
+        <i class="fa fa-times"></i>
+        <span class="mx-1">Cancel</span>
+      </button>
+    </div>
+  </div>
+</ng-template> -->
+<!-- update Employee modal ends -->
+
+
+<pagination-controls (pageChange)="pages = $event"></pagination-controls>
